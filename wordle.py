@@ -23,9 +23,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     await update.message.reply_html(
         rf"Hi {user.mention_html()}!" +
-        "\nTo start game use '/wordle' command"
+        "\nI'm a Wordle game" +
+        "\nI choose a random word and say number of letters of this word, you should guess it." + 
+        "\nI hope you enjoy :)" +
+        "\nTo start paly: /wordle" +
+        "\nFor help: /help"
+
     )
 
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    await update.message.reply_html(
+        "\nI'm a Wordle game" +
+        "\nI choose a random word and say number of letters of this word, you should guess it." + 
+        "\nI hope you enjoy :)" +
+        "\nGame color meaning:\n🟢(right place)\n🟡(exist but in wrong place)\n🔴(not exist)\n" + 
+        "\nTo start paly: /wordle"
+
+    )
 
 async def wordle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     randomWord = WORDS_LIST[random.randint(0, len(WORDS_LIST)-1)]
@@ -79,7 +94,7 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         )
         return GUESS
     
-    matchedWord, hints = matching(randomWord, guessWord, context)
+    matchedWord, hints = matching(randomWord.lower(), guessWord.lower(), context)
     if  matchedWord.lower() == guessWord.lower():
         await update.message.reply_photo(
             'images/win.png',
@@ -100,7 +115,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info('Game Canceled')
     await update.message.reply_photo(
         'images/loser.png',
-        '\n\nHehe, you are a loser.\n' +
+        '\n\nHehe, you lose.\n' +
         'Random word was : {randomWord}'.format(
             randomWord=context.user_data['randomWord']),
         reply_markup=ReplyKeyboardRemove()
@@ -123,6 +138,7 @@ def main():
     )
 
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("help", help))
     app.add_handler(conv_handler)
     app.run_polling()
 
