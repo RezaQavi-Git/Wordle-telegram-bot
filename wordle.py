@@ -89,10 +89,6 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             reply_markup=ForceReply(input_field_placeholder='[word]')
         )
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 792679ec921b132df275167eaa8cfa4d91c32fc8
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info('Game Canceled')
     await update.message.reply_photo(
