@@ -33,6 +33,7 @@ async def wordle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info('User: {user} and RandomWord: {rm}'.format(
         user=update.effective_user.username, rm=randomWord))
     await update.message.reply_html(
+        'Game color meaning:\n🟢(right place)\n🟡(exist but in wrong place)\n🔴(not exist)\n' + 
         'A random word selected, {numberOfLetters} Letters \n'.format(numberOfLetters=len(randomWord)) +
         'Start guessing with [word]',
         reply_markup=ForceReply(input_field_placeholder='[word]')
@@ -43,12 +44,19 @@ async def wordle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 def matching(word, guess, context):
     matchPattern = list(context.user_data['matched'])
+    hints = list()
     for i in range(len(guess)):
         if guess[i] == word[i]:
             matchPattern[i] = guess[i]
+            hints.append('🟢')
+        elif guess[i] in word:
+            hints.append('🟡')
+        else:
+            hints.append('🔴')
+    
     logger.info('Matching : {word}'.format(word=''.join(matchPattern)))
     context.user_data['matched'] = ''.join(matchPattern)
-    return ''.join(matchPattern)
+    return ''.join(matchPattern), ''.join(hints)
 
 
 async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -71,7 +79,7 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         )
         return GUESS
     
-    matchedWord = matching(randomWord, guessWord, context)
+    matchedWord, hints = matching(randomWord, guessWord, context)
     if matchedWord == guessWord:
         await update.message.reply_photo(
             'images/win.jpg',
@@ -83,7 +91,7 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     else:
         await update.message.reply_photo(
             'images/think.png',
-            'Ok, here you can see result\n' +
+            'Guess result : {hints}\n'.format(hints=hints) +
             'letters matched : {matchPattern}\n'.format(matchPattern=matchedWord) +
             'To continue reply [word] otherwise /cancel',
             reply_markup=ForceReply(input_field_placeholder='[word]')
