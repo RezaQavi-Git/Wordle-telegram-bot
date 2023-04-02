@@ -60,7 +60,7 @@ async def wordle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 def matching(word, guess, context):
     matchPattern = list(context.user_data['matched'])
     hints = list()
-    for i in range(len(guess)-1):
+    for i in range(len(guess)):
         if guess[i] == word[i]:
             matchPattern[i] = guess[i]
             hints.append('🟢')
