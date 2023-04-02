@@ -46,7 +46,7 @@ def matching(word, guess, context):
     for i in range(len(guess)):
         if guess[i] == word[i]:
             matchPattern[i] = guess[i]
-    logger.info('Matghing : {word}'.format(word=''.join(matchPattern)))
+    logger.info('Matching : {word}'.format(word=''.join(matchPattern)))
     context.user_data['matched'] = ''.join(matchPattern)
     return ''.join(matchPattern)
 
@@ -55,7 +55,8 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     randomWord = context.user_data['randomWord']
     guessWord = update.message.text
     if guessWord == None:
-        await update.message.reply_html(
+        await update.message.reply_photo(
+            'images/joke.png'
             'Dude, guess a world :(\nor /cancel',
             reply_markup=ForceReply(
                 selective=True, input_field_placeholder='[word]')
@@ -63,41 +64,36 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
         return GUESS
     if len(guessWord) != len(randomWord):
-        await update.message.reply_html(
-            'Dude, atleast guess a world with same length :(\nor /cancel ',
+        await update.message.reply_photo(
+            'images/joke.png',
+            'Dude, at least guess a world with same length :(\nor /cancel ',
             reply_markup=ForceReply(input_field_placeholder='[word]')
         )
         return GUESS
+    
     matchedWord = matching(randomWord, guessWord, context)
     if matchedWord == guessWord:
-        await update.message.reply_html(
+        await update.message.reply_photo(
+            'images/win.jpg',
             'You win, I do nothing for you, go and be happy\n' +
             'Come back soon Dude'
         )
         logger.info('User {user} wins.'.format(user=update.effective_user))
         return ConversationHandler.END
     else:
-        await update.message.reply_html(
+        await update.message.reply_photo(
+            'images/think.png',
             'Ok, here you can see result\n' +
             'letters matched : {matchPattern}\n'.format(matchPattern=matchedWord) +
             'To continue reply [word] otherwise /cancel',
             reply_markup=ForceReply(input_field_placeholder='[word]')
         )
 
-
-async def win(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_html(
-        'You win, I do nothing for you, go and be happy\n' +
-        'Come back soon Dude'
-    )
-
-    return ConversationHandler.END
-
-
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info('Game Canceled')
-    await update.message.reply_html(
-        '\n\nHehe, you are a loser :)\n' +
+    await update.message.reply_photo(
+        'images/loser.jpg',
+        '\n\nHehe, you are a loser.\n' +
         'Random word was : {randomWord}'.format(
             randomWord=context.user_data['randomWord']),
         reply_markup=ReplyKeyboardRemove()
