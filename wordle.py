@@ -2,7 +2,7 @@
 import logging
 import random
 
-from config import TOKEN, WORLDS_LIST
+from config import TOKEN, WORDS_LIST
 from telegram import ForceReply, Update, ReplyKeyboardRemove
 from telegram.ext import (Application, CommandHandler, ContextTypes,
                           ConversationHandler, MessageHandler, filters)
@@ -28,10 +28,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def wordle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    randomWord = WORLDS_LIST[random.randint(0, len(WORLDS_LIST)-1)]
+    randomWord = WORDS_LIST[random.randint(0, len(WORDS_LIST)-1)]
     context.user_data['randomWord'] = randomWord
     logger.info('User: {user} and RandomWord: {rm}'.format(
-        user=update.effective_user, rm=randomWord))
+        user=update.effective_user.username, rm=randomWord))
     await update.message.reply_html(
         'A random word selected, {numberOfLetters} Letters \n'.format(numberOfLetters=len(randomWord)) +
         'Start guessing with [word]',
@@ -78,7 +78,7 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             'You win, I do nothing for you, go and be happy\n' +
             'Come back soon Dude'
         )
-        logger.info('User {user} wins.'.format(user=update.effective_user))
+        logger.info('User {user} wins.'.format(user=update.effective_user.username))
         return ConversationHandler.END
     else:
         await update.message.reply_photo(
@@ -89,6 +89,10 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             reply_markup=ForceReply(input_field_placeholder='[word]')
         )
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 792679ec921b132df275167eaa8cfa4d91c32fc8
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info('Game Canceled')
     await update.message.reply_photo(
