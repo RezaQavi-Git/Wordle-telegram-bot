@@ -80,17 +80,16 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return GUESS
     
     matchedWord, hints = matching(randomWord, guessWord, context)
-    if matchedWord == guessWord:
+    if  matchedWord.lower() == guessWord.lower():
         await update.message.reply_photo(
-            'images/win.jpg',
+            'images/win.png',
             'You win, I do nothing for you, go and be happy\n' +
             'Come back soon Dude'
         )
         logger.info('User {user} wins.'.format(user=update.effective_user.username))
         return ConversationHandler.END
     else:
-        await update.message.reply_photo(
-            'images/think.png',
+        await update.message.reply_html(
             'Guess result : {hints}\n'.format(hints=hints) +
             'letters matched : {matchPattern}\n'.format(matchPattern=matchedWord) +
             'To continue reply [word] otherwise /cancel',
@@ -100,7 +99,7 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info('Game Canceled')
     await update.message.reply_photo(
-        'images/loser.jpg',
+        'images/loser.png',
         '\n\nHehe, you are a loser.\n' +
         'Random word was : {randomWord}'.format(
             randomWord=context.user_data['randomWord']),
