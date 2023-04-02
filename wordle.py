@@ -37,7 +37,7 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "\nI'm a Wordle game" +
         "\nI choose a random word and say number of letters of this word, you should guess it." + 
         "\nI hope you enjoy :)" +
-        "\nGame color meaning:\n🟢(right place)\n🟡(exist but in wrong place)\n🔴(not exist)\n" + 
+        "\nGame color meaning:\n🟢(right place)\n🟡(exists but in the wrong place)\n🔴(not exist)\n" + 
         "\nTo start paly: /wordle"
 
     )
@@ -48,7 +48,7 @@ async def wordle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info('User: {user} and RandomWord: {rm}'.format(
         user=update.effective_user.username, rm=randomWord))
     await update.message.reply_html(
-        'Game color meaning:\n🟢(right place)\n🟡(exist but in wrong place)\n🔴(not exist)\n' + 
+        'Game color meaning:\n🟢(Right place)\n🟡(Exists but in the wrong place)\n🔴(Not exist)\n' + 
         'A random word selected, {numberOfLetters} Letters \n'.format(numberOfLetters=len(randomWord)) +
         'Start guessing with [word]',
         reply_markup=ForceReply(input_field_placeholder='[word]')
@@ -69,7 +69,7 @@ def matching(word, guess, context):
         else:
             hints.append('🔴')
     
-    logger.info('Matching : {word}'.format(word=''.join(matchPattern)))
+    # logger.info('Matching : {word}'.format(word=''.join(matchPattern)))
     context.user_data['matched'] = ''.join(matchPattern)
     return ''.join(matchPattern), ''.join(hints)
 
@@ -98,7 +98,8 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if  matchedWord.lower() == guessWord.lower():
         await update.message.reply_photo(
             'images/win.png',
-            'You win, I do nothing for you, go and be happy\n' +
+            'You win,\n'+
+            'I\'ll do nothing for you, go and be happy :)\n' +
             'Come back soon Dude'
         )
         logger.info('User {user} wins.'.format(user=update.effective_user.username))
