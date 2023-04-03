@@ -1,7 +1,7 @@
 # IMPORTS
 import logging
 import random
-
+import re
 from config import TOKEN, WORDS_LIST
 from telegram import ForceReply, Update, ReplyKeyboardRemove
 from telegram.ext import (Application, CommandHandler, ContextTypes,
@@ -94,6 +94,14 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         )
         return GUESS
     
+    if (guessWord) != (re.sub(r'[^a-zA-Z]', '', guessWord)):
+        await update.message.reply_photo(
+            'images/joke.png',
+            'Dude, just use letters in your guess [A-Z, a-z] :(\nor /cancel ',
+            reply_markup=ForceReply(input_field_placeholder='[word]')
+        )
+        return GUESS
+
     matchedWord, hints = matching(randomWord.lower(), guessWord.lower(), context)
     if  matchedWord.lower() == guessWord.lower():
         await update.message.reply_photo(
