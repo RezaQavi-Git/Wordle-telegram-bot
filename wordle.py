@@ -100,7 +100,8 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             'images/win.png',
             'You win,\n'+
             'I\'ll do nothing for you, go and be happy :)\n' +
-            'Come back soon Dude'
+            'Come back soon Dude',
+            reply_markup=ReplyKeyboardRemove()
         )
         logger.info('User {user} wins.'.format(user=update.effective_user.username))
         return ConversationHandler.END
