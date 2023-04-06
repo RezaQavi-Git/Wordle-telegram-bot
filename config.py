@@ -52,4 +52,4 @@ To continue reply [word] otherwise /cancel"""
 
 
 cancelMessage = """Hehe, you lose
-Random word was : {randomWord}'"""
+Random word was : {randomWord}"""
