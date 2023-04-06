@@ -3,6 +3,10 @@ import logging
 import random
 import re
 from config import TOKEN, WORDS_LIST
+from config import (startMessage, helpMessage, 
+                    wordleMessage, guessMessage, guessLengthMessage, 
+                    guessValidationMessage, winMessage,
+                    guessResultMessage, cancelMessage)
 from telegram import ForceReply, Update, ReplyKeyboardRemove
 from telegram.ext import (Application, CommandHandler, ContextTypes,
                           ConversationHandler, MessageHandler, filters)
@@ -22,25 +26,16 @@ GUESS, WIN = range(2)
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     await update.message.reply_html(
-        rf"Hi {user.mention_html()}!" +
-        "\nI'm a Wordle game" +
-        "\nI choose a random word and say number of letters of this word, you should guess it." + 
-        "\nI hope you enjoy :)" +
-        "\nTo start paly: /wordle" +
-        "\nFor help: /help"
-
+        startMessage.format(user=user.mention_html())
     )
+
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     await update.message.reply_html(
-        "\nI'm a Wordle game" +
-        "\nI choose a random word and say number of letters of this word, you should guess it." + 
-        "\nI hope you enjoy :)" +
-        "\nGame color meaning:\n🟢(right place)\n🟡(exists but in the wrong place)\n🔴(not exist)\n" + 
-        "\nTo start paly: /wordle"
-
+        helpMessage
     )
+
 
 async def wordle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     randomWord = WORDS_LIST[random.randint(0, len(WORDS_LIST)-1)]
@@ -48,9 +43,7 @@ async def wordle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info('User: {user} and RandomWord: {rm}'.format(
         user=update.effective_user.username, rm=randomWord))
     await update.message.reply_html(
-        'Game color meaning:\n🟢(Right place)\n🟡(Exists but in the wrong place)\n🔴(Not exist)\n' + 
-        'A random word selected, {numberOfLetters} Letters \n'.format(numberOfLetters=len(randomWord)) +
-        'Start guessing with [word]',
+        wordleMessage.format(numberOfLetters=len(randomWord)),
         reply_markup=ForceReply(input_field_placeholder='[word]')
     )
     context.user_data['matched'] = '-'*len(randomWord)
@@ -68,7 +61,7 @@ def matching(word, guess, context):
             hints.append('🟡')
         else:
             hints.append('🔴')
-    
+
     # logger.info('Matching : {word}'.format(word=''.join(matchPattern)))
     context.user_data['matched'] = ''.join(matchPattern)
     return ''.join(matchPattern), ''.join(hints)
@@ -79,8 +72,8 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     guessWord = update.message.text
     if guessWord == None:
         await update.message.reply_photo(
-            'images/joke.png'
-            'Dude, guess a world :(\nor /cancel',
+            photo='images/joke.png',
+            caption=guessMessage,
             reply_markup=ForceReply(
                 selective=True, input_field_placeholder='[word]')
         )
@@ -88,46 +81,44 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return GUESS
     if len(guessWord) != len(randomWord):
         await update.message.reply_photo(
-            'images/joke.png',
-            'Dude, at least guess a world with same length :(\nor /cancel ',
-            reply_markup=ForceReply(input_field_placeholder='[word]')
-        )
-        return GUESS
-    
-    if (guessWord) != (re.sub(r'[^a-zA-Z]', '', guessWord)):
-        await update.message.reply_photo(
-            'images/joke.png',
-            'Dude, just use letters in your guess [A-Z, a-z] :(\nor /cancel ',
+            photo='images/joke.png',
+            caption=guessLengthMessage,
             reply_markup=ForceReply(input_field_placeholder='[word]')
         )
         return GUESS
 
-    matchedWord, hints = matching(randomWord.lower(), guessWord.lower(), context)
-    if  matchedWord.lower() == guessWord.lower():
+    if (guessWord) != (re.sub(r'[^a-zA-Z]', '', guessWord)):
         await update.message.reply_photo(
-            'images/win.png',
-            'You win,\n'+
-            'I\'ll do nothing for you, go and be happy :)\n' +
-            'Come back soon Dude',
+            photo='images/joke.png',
+            caption=guessValidationMessage,
+            reply_markup=ForceReply(input_field_placeholder='[word]')
+        )
+        return GUESS
+
+    matchedWord, hints = matching(
+        randomWord.lower(), guessWord.lower(), context)
+    if matchedWord.lower() == guessWord.lower():
+        await update.message.reply_photo(
+            photo='images/win.png',
+            caption=winMessage,
             reply_markup=ReplyKeyboardRemove()
         )
-        logger.info('User {user} wins.'.format(user=update.effective_user.username))
+        logger.info('User {user} wins.'.format(
+            user=update.effective_user.username))
         return ConversationHandler.END
     else:
         await update.message.reply_html(
-            'Guess result : {hints}\n'.format(hints=hints) +
-            'letters matched : {matchPattern}\n'.format(matchPattern=matchedWord) +
-            'To continue reply [word] otherwise /cancel',
+            guessResultMessage.format(hints=hints,
+                                      matchPattern=matchedWord),
             reply_markup=ForceReply(input_field_placeholder='[word]')
         )
+
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info('Game Canceled')
     await update.message.reply_photo(
-        'images/loser.png',
-        '\n\nHehe, you lose.\n' +
-        'Random word was : {randomWord}'.format(
-            randomWord=context.user_data['randomWord']),
+        photo='images/loser.png',
+        caption=cancelMessage.format(randomWord=context.user_data['randomWord']),
         reply_markup=ReplyKeyboardRemove()
     )
     context.user_data['matched'] = None
