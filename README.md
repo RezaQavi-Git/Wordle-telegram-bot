@@ -5,13 +5,17 @@ Here we have simple wordle game, but in telegramBot version.
 ### Clone the project
 With below command you can clone this repository
 ```
-$ git clone https://github.com/RezaQavi-Git/Wordle-telegram-bot.git
+git clone https://github.com/RezaQavi-Git/Wordle-telegram-bot.git
 ```
 
 ### Necessary Libraries
 This project wrote in Python and you need to install necessary libs with pip :
 ```
-$ pip install python-telegram-bot
+pip install python-venv
+python3 -m venv wordle
+source wordle/bin/activate
+pip install dotenv
+pip install python-telegram-bot
 ```
 
 ### Environment
