@@ -49,6 +49,5 @@ guessResultMessage = """Guess result : {hints}
 Letters matched : {matchPattern}
 To continue reply [word] otherwise /cancel"""
 
-
 cancelMessage = """Hehe, you lose
 Random word was : {randomWord}"""
