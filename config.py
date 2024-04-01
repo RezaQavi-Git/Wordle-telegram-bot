@@ -8,23 +8,23 @@ defaultWordsList = open("resources/words_list.txt", "r").read()
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 WORDS_LIST = os.environ.get("WORDS_LIST", default=defaultWordsList).split()
 
-startMessage = """Hi {user}
+startMessage = """Hi {user} 😏
 I'm a Wordle game
-I choose a random word and say number of letters of this word, you should guess it.
+I'll select a word at random and tell you how many letters it has. Your task is to guess the word.
 I hope you enjoy :)
 To start paly: /wordle
 For help: /help"""
 
-helpMessage = """"I'm a Wordle game
-I choose a random word and say number of letters of this word, you should guess it.
+helpMessage = """I'm a Wordle game
+I'll select a word at random and tell you how many letters it has. Your task is to guess the word.
 I hope you enjoy :)
-Game color meaning:
+Game Color Meaning:
 🟢(Right place)
 🟡(Exists, but in the wrong place)
 🔴(Not exist) 
 To start paly: /wordle"""
 
-wordleMessage = """Game color meaning:
+wordleMessage = """Game Color Meaning:
 🟢(Right place)
 🟡(Exists, but in the wrong place)
 🔴(Not exist) 
@@ -45,9 +45,9 @@ Go and be happy :)
 Come back soon
 Play again /wordle"""
 
-guessResultMessage = """Guess result : {hints}
-Letters matched : {matchPattern}
-To continue reply [word] otherwise /cancel"""
+guessResultMessage = """Guess Result: {hints}
+Letters Matched: {matchPattern}
+To continue, reply with [word]. To cancel, use /cancel."""
 
-cancelMessage = """Hehe, you lose
+cancelMessage = """HeHe, you lose
 Random word was : {randomWord}"""
