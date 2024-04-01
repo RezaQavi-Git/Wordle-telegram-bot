@@ -1,13 +1,12 @@
-
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-defaultWordList = open('resources/wordlist.txt', 'r').read()
+defaultWordsList = open("resources/words_list.txt", "r").read()
 
-TOKEN = os.environ.get('TOKEN')
-WORDS_LIST = os.environ.get('WORDS_LIST', default=defaultWordList).split()
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+WORDS_LIST = os.environ.get("WORDS_LIST", default=defaultWordsList).split()
 
 startMessage = """Hi {user}
 I'm a Wordle game
@@ -20,14 +19,14 @@ helpMessage = """"I'm a Wordle game
 I choose a random word and say number of letters of this word, you should guess it.
 I hope you enjoy :)
 Game color meaning:
-🟢(right place)
-🟡(exists but in the wrong place)
-🔴(not exist) 
+🟢(Right place)
+🟡(Exists, but in the wrong place)
+🔴(Not exist) 
 To start paly: /wordle"""
 
 wordleMessage = """Game color meaning:
 🟢(Right place)
-🟡(Exists but in the wrong place)
+🟡(Exists, but in the wrong place)
 🔴(Not exist) 
 A random word selected, {numberOfLetters} Letters
 Start guessing with [word]"""
