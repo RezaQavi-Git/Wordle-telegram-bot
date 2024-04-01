@@ -2,7 +2,8 @@
 import logging
 import random
 import re
-from config import TELEGRAM_BOT_TOKEN, WORDS_LIST
+from telegram import Bot
+from config import TELEGRAM_BOT_TOKEN, WORDS_LIST, LOG_CHANNEL_ID
 from config import (
     startMessage,
     helpMessage,
@@ -25,10 +26,20 @@ from telegram.ext import (
 )
 
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.ERROR
 )
 logger = logging.getLogger("WORDLE")
 GUESS, WIN = range(2)
+
+bot = Bot(token=TELEGRAM_BOT_TOKEN)
+
+
+def send_activity_log(message):
+    try:
+        bot.send_message(chat_id=LOG_CHANNEL_ID, text=message)
+    except Exception as e:
+        logger.error(e)
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
@@ -46,6 +57,11 @@ async def wordle(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info(
         "User: {user} and RandomWord: {rm}".format(
             user=update.effective_user.username, rm=randomWord
+        )
+    )
+    send_activity_log(
+        message="User {user}, start guessing: {word}".format(
+            user=update.effective_user.username, word=randomWord
         )
     )
     await update.message.reply_html(
@@ -106,6 +122,11 @@ async def guess(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             caption=winMessage,
             reply_markup=ReplyKeyboardRemove(),
         )
+        send_activity_log(
+            message="User {user}, won: {word}".format(
+                user=update.effective_user.username, word=randomWord
+            )
+        )
         logger.info("User {user} wins.".format(user=update.effective_user.username))
         return ConversationHandler.END
     else:
@@ -119,7 +140,9 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info("Game Canceled")
     await update.message.reply_photo(
         photo="images/loser.png",
-        caption=cancelMessage.format(randomWord=context.user_data["randomWord"].upper()),
+        caption=cancelMessage.format(
+            randomWord=context.user_data["randomWord"].upper()
+        ),
         reply_markup=ReplyKeyboardRemove(),
     )
     context.user_data["matched"] = None

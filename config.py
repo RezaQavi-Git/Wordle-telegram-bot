@@ -7,6 +7,7 @@ defaultWordsList = open("resources/words_list.txt", "r").read()
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 WORDS_LIST = os.environ.get("WORDS_LIST", default=defaultWordsList).split()
+LOG_CHANNEL_ID = os.environ.get("LOG_CHANNEL_ID", default='')
 
 startMessage = """Hi {user} 😏
 I'm a Wordle game

@@ -25,3 +25,5 @@ To use this bot you need first create `.env` file beside code after you clone, a
     Bot Access token you can get from https://t.me/BotFather after you create the bot.
 2. WORDS_LIST:
     This env is a string witch include list of words separated with `space`
+3. LOG_CHANNEL_ID:
+    If you need activity log of your bot, fill this env
