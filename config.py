@@ -40,9 +40,9 @@ or /cancel"""
 guessValidationMessage = """Dude, just use letters in your guess [A-Z, a-z] :(
 or /cancel"""
 
-winMessage = """You Win 🚀
-I\'ll do nothing for you, go and be happy :)
-Come back soon Dude
+winMessage = """You Win 🔥
+Go and be happy :)
+Come back soon
 Play again /wordle"""
 
 guessResultMessage = """Guess result : {hints}

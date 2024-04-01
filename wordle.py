@@ -61,7 +61,7 @@ def matching(word, guess, context):
     hints = list()
     for i in range(len(guess)):
         if guess[i] == word[i]:
-            matchPattern[i] = guess[i]
+            matchPattern[i] = guess[i].upper()
             hints.append("🟢")
         elif guess[i] in word:
             hints.append("🟡")
@@ -119,7 +119,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     logger.info("Game Canceled")
     await update.message.reply_photo(
         photo="images/loser.png",
-        caption=cancelMessage.format(randomWord=context.user_data["randomWord"]),
+        caption=cancelMessage.format(randomWord=context.user_data["randomWord"].upper()),
         reply_markup=ReplyKeyboardRemove(),
     )
     context.user_data["matched"] = None
